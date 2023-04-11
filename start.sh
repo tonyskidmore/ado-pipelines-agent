@@ -87,12 +87,20 @@ print_header "3. Configuring Azure Pipelines agent..."
 
 print_header "4. Running Azure Pipelines agent..."
 
-trap 'cleanup; exit 0' EXIT
-trap 'cleanup; exit 130' INT
-trap 'cleanup; exit 143' TERM
+if ! grep -q "placeholder-agent" <<< "$AZP_AGENT_NAME"; then
+  echo "Cleanup Traps Enabled"
 
-chmod +x ./run.sh
+  trap 'cleanup; exit 0' EXIT
+  trap 'cleanup; exit 130' INT
+  trap 'cleanup; exit 143' TERM
+else
+  # directly exit the template agent
+  trap - EXIT
+  exit 0
+fi
+
+chmod +x ./run-docker.sh
 
 # To be aware of TERM and INT signals call run.sh
 # Running it with the --once flag at the end will shut down the agent after the build is executed
-./run.sh "$@" & wait $!
+./run-docker.sh "$@" --once & wait $!
