@@ -27,7 +27,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'azdo-container-image'
+          image-ref: 'ado-pipelines-agent'
           format: 'table'
           # uncomment to fail on found issues with defined severity
           exit-code: '1'
